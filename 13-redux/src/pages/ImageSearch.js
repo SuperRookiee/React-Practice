@@ -1,4 +1,4 @@
-import React, { memo, useEffect } from 'react';
+import React, { memo, useEffect, useRef } from 'react';
 import { useQueryString } from '../hooks/useQueryString';
 import Spinner from '../components/Spinner';
 import ErrorView from '../components/ErrorView';
@@ -8,7 +8,10 @@ import ImageView from '../components/ImageView';
 
 import { useSelector, useDispatch } from 'react-redux';
 import { getKakaoSearch } from '../slices/ImageSearchSlice';
+import { useInView } from 'react-intersection-observer';
+
 import dayjs from 'dayjs';
+import { useNavigate } from 'react-router-dom';
 
 const ImageSearch = memo(() => {
     const { query } = useQueryString();
@@ -17,11 +20,37 @@ const ImageSearch = memo(() => {
 
     const { data, loading, error } = useSelector((state) => state.ImageSearchSlice);
 
+    const [isEnd, inView] = useInView();
+
+    const navigate = useNavigate();
+
+    const page = useRef(1);
+
     useEffect(() => {
+        page.current = 1;
         if(query) {
-            dispatch(getKakaoSearch(query));
+            dispatch(getKakaoSearch({
+                query: query,
+                page: page.current
+            }));
+            window.scrollTo(0,0);
         }
     }, [query]);
+
+    useEffect(() => {
+        if(!data?.meta?.isEnd && inView && !loading) {
+            console.log("스크롤이 맨 끝에 도착함");
+
+            page.current++;
+
+            dispatch(getKakaoSearch({
+                query: query,
+                page: page.current
+            }));
+
+            navigate(`${window.location.pathname}?query=${query}&page=${page.current}`)
+        }
+    }, [inView]);
 
     return (
         <div>
@@ -36,7 +65,8 @@ const ImageSearch = memo(() => {
                         {
                             data.documents.map(({ doc_url, image_url, thumbnail_url, display_sitename, collection, width, height, datetime }, i) => {
                                 return (
-                                    <li className="list-item" key={i}>
+                                    <li className="list-item" key={i}
+                                        {...(!data?.meta?.isEnd && !loading && data.documents.length - 1 === i) ? { ref: isEnd } : {}}>
                                         <a className="list-item-link" href={doc_url} target="_blank" rel="noreferrer">
                                             <div className="thumbnail">
                                                 <ImageView src={thumbnail_url} alt={display_sitename} />
@@ -56,7 +86,7 @@ const ImageSearch = memo(() => {
                         }
                     </ImageList>
                 )
-            )};
+            )}
         </div>
     );
 });

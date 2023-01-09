@@ -3,13 +3,15 @@ import CounterSlice from "./slices/CounterSlice";
 import DepartmentSlice from "./slices/DepartmentSlice";
 import NewsSlice from "./slices/NewsSlice";
 import MovieRankSlice from "./slices/MovieRankSlice";
+import ImageSearchSlice from "./slices/ImageSearchSlice";
 
 const store = configureStore({
     reducer: {
         CounterSlice: CounterSlice,
         DepartmentSlice: DepartmentSlice,
         NewsSlice: NewsSlice,
-        MovieRankSlice: MovieRankSlice
+        MovieRankSlice: MovieRankSlice,
+        ImageSearchSlice: ImageSearchSlice
     },
 
     // 비동기 미들웨어 추가 (Ajax처리가 필요한 경우만 설정)

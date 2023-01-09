@@ -63,11 +63,9 @@ const ImageList = styled.ul`
             }
 
             .content {
-                flex: none;
                 width: 100%;
                 box-sizing: border-box;
                 padding: 10px;
-                display: flex;
                 flex-direction: flex-start;
                 padding: 10px 15px;
 

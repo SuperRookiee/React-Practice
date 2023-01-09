@@ -5,8 +5,8 @@ import { useQueryString } from "../hooks/useQueryString";
 
 const Form = styled.form`
     background-color: #fff;
-    diplay: flex;
-    padding 5px 10px;
+    display: flex;
+    padding: 5px 10px;
     margin: 0;
 
     input, button {
